@@ -1,0 +1,111 @@
+Mastering Capacities Management and Governance
+
+Setup 
+	1. Every user should have a useraname and password shared with you. if you don't have one please contact Instructor or Lab Procter 
+	2. From your own devices access browser 
+		a. You can use in-Private / in-Cognito mode of the browser
+		b. Or you can use profiles and create profile for the user.
+	3. Access Fabric using the given username
+		a. Go to https://app.fabric.microsoft.com (copy and paste the link into in-private browser if you want)
+		b. Provide your email id and password
+		c. It will ask to change / reset password for the first time
+		d. If you get a screen for MFA you can ignore MFA.
+		e. You should land on Fabric Portal home screen. 
+		f. If you see "Welcome to the Fabric View" pop up you can click cancel
+	
+	Note: if you immediately go to Workspaces you may not see anything apart from My Workspace. Give it at least 5-10 minutes for account to be activated before you start the lab. After 5-10 minutes refresh the webpage and you should see "Microsoft Fabric Capacity Metrics" workspace.
+	
+	4. If you immediately go to Workspaces you may not see anything apart from My Workspace. Give it at least 5-10 minutes for account to be activated before you start the lab. 
+	5. After 5-10 minutes refresh the webpage and you should see other workspaces like 
+		a. Microsoft Fabric Capacity Metrics
+		b. DF Market - MCAP GRP 1 / 2
+		c. DFM_Market_Serve
+
+
+
+Lab1: Access DFM Summary report
+
+LabSteps
+	1. In the workspaces you should also see other workspaces like 
+		a. Microsoft Fabric Capacity Metrics
+		b. DF Market - MCAP GRP 1 / 2
+		c. DFM_Market_Serve
+	2. Use DF Market - MCAP GRP 1 / 2 to go to that workspace
+		a. Click ok or got it for any pop ups
+	3. In the workspace there are two reports
+		a. DFM Summary - Grp 1 / 2 - DQ
+		b. DFM Summary - Grp 1 / 2 - Import
+	4. Use one or both reports and start accessing those reports. 
+	5. Try and access as much as possible with different slicers drill downs etc.
+	6. This should generate good load on the capacity.
+	
+
+Lab2: Use Capacity Metrics App
+Scenario:
+ On Sat Mar 14th around midnight 12:30 AM lot of users reported slowness in the reports. Identify what was happening that time identify
+	1. Why there was slowness
+	2. Which workspaces were active around that time and consuming the most 
+	3. Which items in the workspace were consuming the most
+	4. Was the pattern of usage same for those items or it suddenly started consuming more
+	5. Which model was impacted
+
+LabSteps
+	1. In the workspaces you should also see other workspaces like 
+		a. Microsoft Fabric Capacity Metrics
+		b. DF Market - MCAP GRP 1 / 2
+		c. DFM_Market_Serve
+	2. If you don't see Capacity Metrics App workspace 
+		a. then use this link to access the report. 
+		Link For Capacity Metrics App
+		https://app.fabric.microsoft.com/links/JuejKgYwZI?ctid=f527843b-95a5-498e-b6d4-e8895b9816c6&pbi_source=linkShare
+		(copy and paste the link into in-private browser)
+	3. Click on the workspace "Microsoft Fabric Capacity Metrics"
+		a. Click ok or got it for any pop ups
+	4. Click the Report "Fabric Capacity Metrics"
+	5. You should land on the "Health (Preview)" page. 
+		a. Check for the capacity utilization for all capacities in that region (West US)
+		b. Observe following Cards
+			i. #Throttled Capacities - Capacities throttled in last 24 hours 
+			ii. # Interactive Rejected Capacities  - Capacities having Interactive Rejection in last 24 hours 
+			iii. # Background Rejected Capacities - Capacities having Background Rejection in last 24 hours 
+		c. Check the Table below that whows the health of each capacity
+		d. Lok for columns 
+			i. Health 
+			ii. Throttling (s)
+			iii. P95 interactive delay
+			iv. P95 interactive rejection
+			v. P95 background rejection
+		e. If you take your mouse to the top right corner of the table you will see "(?)" sign
+		Note: Capacity Metrics App has this "(?)" sign for each visual to provide brief documentation about the visual as well as page. Always make a practice to use this if you want to get any clarification about any visual. 
+		f. Hovering over the "(?)" sign will provide details about the table.
+	
+	6. Identify the capacity "fabcon-gen-westus-p1-09" -> Right Click -> Compute. This will take you to the compute page for that capacity.
+	7. On the Compute page observe utilization for last 14 days. 
+	Note: This Capacity Metrics App is set in the US Central time zone offset. 
+	8. On the top left chart Multi metric ribbon chart  Click on "Sat 14" on the x axis of the chart. You will see top right chart "CU % over time" filtered for Sat 14th. You can see around 12:00 AM there was huge spike in the utilization. We need to identify if there is any throttling around that time. 
+	9. Click on Throttling tab in the top right chart. You will see the interactive delay chart shows more than 100%. Which means there was interactive delay around this time.  
+	10. To further check if there was any interactive rejection, you can click on interactive rejection tab next to highlighted interactive delay tab.  Click on interactive rejection tab to confirm if there was any interactive rejection. 
+	11. Click on background rejection to also see the background rejection % 
+	12. Now come back to interactive rejection. To go granular we can drill down to hour level. 
+	13. Click on single down arrow to turn on drill mode. And then double-click on "Sat 14" on x axis. This will take you to hour level usage in Multi-metric ribbon chart. 
+	14. Important - clack on the single down arrow once again to remove the drill mode (set drill mode off) 
+	15. Click on number 0 on the x axis of the ribbon chart to see interactive delay  split into one hour timepoint chunks.
+	16. Right click on topmost timepoint (3/14/2026 12:41:30 AM) to drill through to Timepoint Summary (Preview) page
+	17. Observe Background usage. Click on Interactive tab to see the interactive summary
+	18. Identify background and interactive operations taking up CUs 
+		a. You can further drill through to Timepoint Item Detail page to see item level timepoint charges.
+	Note: By default the timepoint Item Detail page lands on Background page. if you are navigating from interactive Timepoint Summary make sure to click on Interactive tab on top right of the bottom chart. 
+	19. Use operation id column to find OperationId that you can map to Workspace monitoring.
+	20.  On Fabric Portal Create workspace and assign it to premium capacity
+		a. Go to workspaces
+		b. Create New Workspace
+		c. Give it a name that includes the number from your username 
+			i. e.g. for user 250 the name could user250Workspace
+	21. Crete KQL Query Set and connect to monitoring KQL Database for that workspace.
+	Tip: You can use following mappings to identify operations.
+		For Jupiter Notebook Run 
+			• Operation ID = Job Instance ID
+		For Warehouse Query
+			• Operation id = Dist_statement_id 
+		For Semantic Model
+			• Operatation id  = OperationId  
